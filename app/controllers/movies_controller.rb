@@ -45,6 +45,29 @@ class MoviesController < ApplicationController
     redirect_to movies_path
   end
 
+  def search_tmdb
+    terms = params.permit(:title, :release_year, :language).to_h.symbolize_keys
+    return if terms.empty?
+
+    if terms[:title].blank?
+      flash.now[:danger] = 'Please fill in all required fields!'
+      return
+    end
+
+    @movies = Movie.find_in_tmdb(terms)
+    flash.now[:warning] = 'No movies found with given parameters!' if @movies.empty?
+  rescue Faraday::Error
+    flash.now[:danger] = 'TMDb could not complete the search. Please try again.'
+  end
+
+  def add_movie
+    attributes = params.require(:movie).permit(:title, :rating, :description, :release_date)
+    movie = Movie.create!(attributes)
+
+    flash[:success] = "#{movie.title} was successfully added to RottenPotatoes."
+    redirect_to search_path
+  end
+
   private
 
   def force_index_redirect
