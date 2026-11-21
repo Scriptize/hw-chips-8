@@ -3,7 +3,14 @@
 
 
 <h2>Search in TMDb</h2>
-<%# Part 5 here %>
+<% [:danger, :success].each do |type| %>
+  <% next if flash[type].blank? %>
+
+  <div class="alert alert-<%= type %> alert-dismissible fade show" role="alert">
+    <%= flash[type] %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% end %>
 
 <div class="search-container">
 <%# Part 1 here %>
